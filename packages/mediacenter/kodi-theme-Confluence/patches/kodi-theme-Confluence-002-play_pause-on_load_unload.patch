@@ -1,0 +1,10 @@
+--- kodi-theme-Confluence-14-90a75f0.orig/720p/VideoFullScreen.xml	2015-02-02 21:13:13.636556715 +0000
++++ kodi-theme-Confluence-14-90a75f0/720p/VideoFullScreen.xml	2015-02-02 21:16:10.336467799 +0000
+@@ -1,5 +1,7 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <window>
++	<onunload condition="Player.Playing">PlayerControl(Play)</onunload>
++	<onload condition="Player.Paused">PlayerControl(Play)</onload>
+ 	<defaultcontrol>-</defaultcontrol>
+ 	<controls>
+ 		<!-- media infos -->
