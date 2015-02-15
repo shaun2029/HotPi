@@ -33,7 +33,7 @@
         TARGET_FPU="vfp"
         ;;
     esac
-
+    
   # Bootloader to use (syslinux / u-boot / bcm2835-bootloader)
     BOOTLOADER="bcm2835-bootloader"
 
@@ -66,8 +66,8 @@
 # setup build defaults
 ################################################################################
 
-  # Build optimizations (size/normal)
-    OPTIMIZATIONS="size"
+  # Build optimizations (size/normal/fast)
+    OPTIMIZATIONS="fast"
 
   # Project CFLAGS
     PROJECT_CFLAGS=""
