@@ -35,6 +35,7 @@ PKG_AUTORECONF="no"
 
 pre_make_target() {
   unset LDFLAGS
+  cp $ROOT/$PKG_BUILD/hostapd-0.8/hostapd/defconfig $ROOT/$PKG_BUILD/hostapd-0.8/hostapd/.config
 }
 
 make_target() {
@@ -43,9 +44,15 @@ make_target() {
        KSRC=$(kernel_path) \
        CROSS_COMPILE=$TARGET_PREFIX \
        CONFIG_POWER_SAVING=n
+  
+  make -C hostapd-0.8/hostapd
 }
 
 makeinstall_target() {
   mkdir -p $INSTALL/lib/modules/$(get_module_dir)/$PKG_NAME
     cp *.ko $INSTALL/lib/modules/$(get_module_dir)/$PKG_NAME
+    
+  mkdir -p $INSTALL/usr/sbin  
+    cp hostapd-0.8/hostapd/hostapd $INSTALL/usr/sbin/
+    cp hostapd-0.8/hostapd/hostapd_cli $INSTALL/usr/sbin/
 }
