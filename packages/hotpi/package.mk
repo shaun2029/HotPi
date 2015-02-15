@@ -1,6 +1,6 @@
 ################################################################################
 #      This file is part of OpenELEC - http://www.openelec.tv
-#      Copyright (C) 2009-2016 Stephan Raue (stephan@openelec.tv)
+#      Copyright (C) 2009-2014 Stephan Raue (stephan@openelec.tv)
 #
 #  OpenELEC is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -16,18 +16,41 @@
 #  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-PKG_NAME="oem"
-PKG_VERSION=""
+PKG_NAME="hotpi"
+PKG_VERSION="1"
 PKG_REV="1"
-PKG_ARCH="any"
-PKG_LICENSE="various"
-PKG_SITE="http://www.openelec.tv"
+PKG_ARCH="arm"
+PKG_LICENSE="GPL"
+PKG_SITE=""
 PKG_URL=""
-PKG_DEPENDS_TARGET="hotpi"
+PKG_DEPENDS_TARGET="toolchain bash MPlayer dnsmasq"
 PKG_PRIORITY="optional"
-PKG_SECTION="virtual"
-PKG_SHORTDESC="OEM: Metapackage for various OEM packages"
-PKG_LONGDESC="OEM: Metapackage for various OEM packages"
+PKG_SECTION="multimedia"
+PKG_SHORTDESC="Hotpi includes VPN WiFi Hotspot, RadioGaga (Internet Radio) etc."
+PKG_LONGDESC="Hotpi includes VPN WiFi Hotspot, RadioGaga (Internet Radio) etc."
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
+
+pre_configure_target() {
+: # nothing to make here
+}
+
+configure_target() {
+: # nothing to make here
+}
+
+pre_make_target() {
+: # nothing to make here
+}
+
+make_target() {
+: # nothing to make here
+}
+
+
+makeinstall_target() {
+  mkdir -p $INSTALL
+  cp -RP $PKG_DIR/files/*  $INSTALL/
+}
+
