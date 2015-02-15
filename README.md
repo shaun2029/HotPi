@@ -1,4 +1,6 @@
-Based on OpenELEC with HotPi additions:
+# OpenELEC-HotPi
+
+Based on OpenELEC with HotPi additions including VPN WiFi Hotspot, Internet Radio & Phillips HUE support
 
 MythTV Raspberry Pi2 addon crash fix and protocol 84 support.
 MPlayer
@@ -9,6 +11,7 @@ Bash symbolic link to /bin/bash.real
 Philips Hue support
 RadioGaga
 Compiled with -Ofast for better RaspberryPi playback
+
 
 [OpenELEC](http://www.openelec.tv)
 
