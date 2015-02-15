@@ -1,3 +1,15 @@
+Based on OpenELEC with HotPi additions:
+
+MythTV Raspberry Pi2 addon crash fix and protocol 84 support.
+MPlayer
+VPN script based on Openvpn 
+WiFi hotspot support
+dnsmasq for hotspot
+Bash symbolic link to /bin/bash.real
+Philips Hue support
+RadioGaga
+Compiled with -Ofast for better RaspberryPi playback
+
 [OpenELEC](http://www.openelec.tv)
 
 # OpenELEC - Open Embedded Linux Entertainment Center
