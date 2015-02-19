@@ -68,8 +68,8 @@
 # setup build defaults
 ################################################################################
 
-  # Build optimizations (size/normal)
-    OPTIMIZATIONS="size"
+  # Build optimizations (size/normal/fast)
+    OPTIMIZATIONS="fast"
 
   # Project CFLAGS
     PROJECT_CFLAGS=""
