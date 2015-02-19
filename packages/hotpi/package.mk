@@ -48,9 +48,17 @@ make_target() {
 : # nothing to make here
 }
 
-
 makeinstall_target() {
   mkdir -p $INSTALL
   cp -RP $PKG_DIR/files/*  $INSTALL/
+
+  mkdir -p $INSTALL/usr/lib/systemd/system
+    cp $PKG_DIR/system.d/* $INSTALL/usr/lib/systemd/system
+    
 }
+
+post_install() {
+  enable_service radiogaga.service
+}
+
 
