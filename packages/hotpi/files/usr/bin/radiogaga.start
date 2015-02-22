@@ -1,4 +1,6 @@
 #!/bin/bash.real
+# Set start volume
+amixer -- sset PCM 30%
 # Start radiogaga - preload openssl libraries
 export LD_PRELOAD=/usr/lib/libssl.so
 export LD_PRELOAD=/usr/lib/libcrypto.so
