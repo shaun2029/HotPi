@@ -1,0 +1,66 @@
+--- a/language/English/strings.po	2015-03-08 22:47:48.471908929 +0000
++++ b/language/English/strings.po	2015-03-08 22:45:40.950756739 +0000
+@@ -11944,6 +11944,17 @@
+ msgstr ""
+ 
+ #: system/settings/settings.xml
++msgctxt "#66000"
++msgid "Amount to reduce any top and bottom black bars by"
++msgstr ""
++
++#. Description of setting "Videos -> Playback -> Amount to reduce any top and bottom black bars by" with label #38016
++#: system/settings/settings.xml
++msgctxt "#66001"
++msgid "Allow video player to reduce the top and bottom black bars whilst maintaining the aspect ratio, by cropping the left and right of the image."
++msgstr ""
++
++#: system/settings/settings.xml
+ msgctxt "#22022"
+ msgid "Show video files in listings"
+ msgstr ""
+--- b/system/settings/settings.xml	2015-03-08 22:11:12.388798946 +0000
++++ a/system/settings/settings.xml	2015-03-08 21:48:51.594688855 +0000
+@@ -478,6 +478,18 @@
+             <formatlabel>14047</formatlabel>
+           </control>
+         </setting>
++        <setting id="videoplayer.reduceletterbox" type="integer" label="66000" help="66001">
++          <level>2</level>
++          <default>0</default>
++          <constraints>
++            <minimum label="231">0</minimum>
++            <step>5</step>
++            <maximum>100</maximum>
++          </constraints>
++          <control type="spinner" format="string">
++            <formatlabel>14047</formatlabel>
++          </control>
++        </setting>
+         <setting id="videoplayer.stretch43" type="integer" label="173" help="36171">
+           <level>1</level>
+           <default>0</default> <!-- ViewModeNormal -->
+--- b/xbmc/cores/VideoRenderers/BaseRenderer.cpp	2015-03-08 22:11:12.356799653 +0000
++++ a/xbmc/cores/VideoRenderers/BaseRenderer.cpp	2015-03-08 20:45:59.684059637 +0000
+@@ -429,6 +429,22 @@
+   // Scale the movie up by set zoom amount
+   newWidth *= zoomAmount;
+   newHeight *= zoomAmount;
++
++/* Zoom into image with black bars on the top and bottom. This will 
++   crop some off the sides of the image and reduce the black bars (letterbox). */
++  if (newHeight < screenHeight) {
++    float fReduceLetterbox = CSettings::Get().GetInt("videoplayer.reduceletterbox") * 0.01f;
++    
++    // Calculate the amount of top & bottom black bar height to remove
++    float reduceBarHeight = (screenHeight - newHeight) * fReduceLetterbox;
++
++    // Calculate the zoom amount
++    float boxZoomAmount = (reduceBarHeight + newHeight) / newHeight;
++    
++    // Adjust the width and height
++    newWidth *= boxZoomAmount;
++    newHeight *= boxZoomAmount;
++  }
+ 
+   // Centre the movie
+   float posY = (screenHeight - newHeight) / 2;
