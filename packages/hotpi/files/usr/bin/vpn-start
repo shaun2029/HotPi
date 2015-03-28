@@ -4,7 +4,7 @@
 
 # This script is used to control a VPN connection. 
 
-VERSION="1.2.7-pi-openelec"
+VERSION="1.3.0-pi-openelec"
 
 # Get version information
 if [ -e "/etc/vpn-mode" ]; then
@@ -52,11 +52,11 @@ STOPONEXIT=1
 # This seems to cause disconnections and module unloading.
 # To prevent this stop the network_manager after the WiFi link has 
 # been active for a period.
-NETWORKMANAGERSTATE=1       # Assume network manager is up
-KILLNETWORKMANAGER=1	    # Kill NetworkManager seems to kill the hotspot on the raspberry pi.
+NETWORKMANAGERSTATE=0   # Assume network manager is up
+KILLNETWORKMANAGER=0    # Kill NetworkManager seems to kill the hotspot on the raspberry pi.
 STARTDNSMASQ=1		    # Start dnsmasq after hotspot if not started
 
-SOUND=1               # Sound on/off
+SOUND=1                 # Sound on/off
 SOUNDVOLUME="30 -softvol "	      # Sound level for audio vpn status feedback
 SOUNDUSER=""               # User with sound permissions
 
@@ -75,7 +75,7 @@ function finish {
        sudo ap-hotspot stop
 
        # The network manager may be stopped.
-       if [ $NETWORKMANAGERSTATE = 0 ]; then
+       if [ $KILLNETWORKMANAGER = 1 ] && [ $NETWORKMANAGERSTATE = 0 ]; then
            startnetworkmanager
        fi
    fi
@@ -470,6 +470,21 @@ if [ $KILLNETWORKMANAGER != 0 ]; then
     echo "VPN HOTSPOT: Killing NetworkManager ..."
 
     stopnetworkmanager
+fi
+
+# Wait for hotspot interface.
+echo "VPN HOTSPOT: Waiting for hotspot interface $WLANIF ..."
+
+TIMENOW=`date +%s`
+TIMEOUT=$[TIMENOW + 60]
+
+while [ ! -d "/sys/class/net/$WLANIF" ] &&  [ $TIMENOW -lt $TIMEOUT ]
+do
+    sleep 1s
+done
+
+if [ ! -d "/sys/class/net/$WLANIF" ]; then
+    echo "ERROR: Hotspot interface $WLANIF not found!"
 fi
 
 # Start Hotspot.
