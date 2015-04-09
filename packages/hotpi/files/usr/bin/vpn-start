@@ -451,6 +451,21 @@ fi
 
 touch /tmp/vpn-start.run
 
+# Wait for hotspot interface.
+echo "VPN HOTSPOT: Waiting for hotspot interface $WLANIF ..."
+
+TIMENOW=`date +%s`
+TIMEOUT=$[TIMENOW + 60]
+
+while [ ! -d "/sys/class/net/$WLANIF" ] &&  [ $TIMENOW -lt $TIMEOUT ]
+do
+    sleep 1s
+done
+
+if [ ! -d "/sys/class/net/$WLANIF" ]; then
+    echo "ERROR: Hotspot interface $WLANIF not found!"
+fi
+
 if [ -f /tmp/vpn-hotspot-bypass.run ]; then
     rm /tmp/vpn-hotspot-bypass.run
 fi
@@ -470,21 +485,6 @@ if [ $KILLNETWORKMANAGER != 0 ]; then
     echo "VPN HOTSPOT: Killing NetworkManager ..."
 
     stopnetworkmanager
-fi
-
-# Wait for hotspot interface.
-echo "VPN HOTSPOT: Waiting for hotspot interface $WLANIF ..."
-
-TIMENOW=`date +%s`
-TIMEOUT=$[TIMENOW + 60]
-
-while [ ! -d "/sys/class/net/$WLANIF" ] &&  [ $TIMENOW -lt $TIMEOUT ]
-do
-    sleep 1s
-done
-
-if [ ! -d "/sys/class/net/$WLANIF" ]; then
-    echo "ERROR: Hotspot interface $WLANIF not found!"
 fi
 
 # Start Hotspot.
