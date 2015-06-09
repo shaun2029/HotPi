@@ -17,12 +17,12 @@
 ################################################################################
 
 PKG_NAME="kodi-pvr-addons"
-PKG_VERSION="4854fbe"
+PKG_VERSION="40bbf24"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE="https://github.com/opdenkamp/xbmc-pvr-addons"
-PKG_URL="$DISTRO_SRC/$PKG_NAME-$PKG_VERSION.tar.xz"
+PKG_SITE="https://github.com/shaun2029/xbmc-pvr-addons"
+PKG_URL="https://www.immutablefix.co.uk/OpenELEC-HotPi/$PKG_NAME-$PKG_VERSION.tar.gz"
 PKG_DEPENDS_TARGET="toolchain curl kodi"
 PKG_PRIORITY="optional"
 PKG_SECTION="mediacenter"
