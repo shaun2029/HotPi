@@ -1,0 +1,79 @@
+Determining if the function __atomic_fetch_add_4 exists in the atomic failed with the following output:
+Change Dir: /media/Data/git/pi/OpenELEC.tv/build-pvr.mythtv-RPi2.arm/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_4c860/fast"
+/usr/bin/make -f CMakeFiles/cmTC_4c860.dir/build.make CMakeFiles/cmTC_4c860.dir/build
+make[1]: Entering directory '/media/Data/git/pi/OpenELEC.tv/build-pvr.mythtv-RPi2.arm/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_4c860.dir/CheckFunctionExists.c.o
+/media/Data/git/pi/OpenELEC.tv/build.OpenELEC-RPi2.arm-6.0-devel/toolchain/bin/armv7ve-openelec-linux-gnueabi-gcc    -DCHECK_FUNCTION_EXISTS=__atomic_fetch_add_4   -o CMakeFiles/cmTC_4c860.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.5/Modules/CheckFunctionExists.c
+/usr/share/cmake-3.5/Modules/CheckFunctionExists.c:6:6: warning: conflicting types for built-in function '__atomic_fetch_add_4'
+ char CHECK_FUNCTION_EXISTS();
+      ^
+Linking C executable cmTC_4c860
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4c860.dir/link.txt --verbose=1
+/media/Data/git/pi/OpenELEC.tv/build.OpenELEC-RPi2.arm-6.0-devel/toolchain/bin/armv7ve-openelec-linux-gnueabi-gcc   -DCHECK_FUNCTION_EXISTS=__atomic_fetch_add_4    CMakeFiles/cmTC_4c860.dir/CheckFunctionExists.c.o  -o cmTC_4c860 -rdynamic -latomic 
+/media/Data/git/pi/OpenELEC.tv/build.OpenELEC-RPi2.arm-6.0-devel/toolchain/lib/gcc/armv7ve-openelec-linux-gnueabi/4.9.3/../../../../armv7ve-openelec-linux-gnueabi/bin/ld: cannot find -latomic
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_4c860.dir/build.make:97: recipe for target 'cmTC_4c860' failed
+make[1]: *** [cmTC_4c860] Error 1
+make[1]: Leaving directory '/media/Data/git/pi/OpenELEC.tv/build-pvr.mythtv-RPi2.arm/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_4c860/fast' failed
+make: *** [cmTC_4c860/fast] Error 2
+
+
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /media/Data/git/pi/OpenELEC.tv/build-pvr.mythtv-RPi2.arm/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_bbf65/fast"
+/usr/bin/make -f CMakeFiles/cmTC_bbf65.dir/build.make CMakeFiles/cmTC_bbf65.dir/build
+make[1]: Entering directory '/media/Data/git/pi/OpenELEC.tv/build-pvr.mythtv-RPi2.arm/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_bbf65.dir/CheckSymbolExists.c.o
+/media/Data/git/pi/OpenELEC.tv/build.OpenELEC-RPi2.arm-6.0-devel/toolchain/bin/armv7ve-openelec-linux-gnueabi-gcc     -o CMakeFiles/cmTC_bbf65.dir/CheckSymbolExists.c.o   -c /media/Data/git/pi/OpenELEC.tv/build-pvr.mythtv-RPi2.arm/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_bbf65
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_bbf65.dir/link.txt --verbose=1
+/media/Data/git/pi/OpenELEC.tv/build.OpenELEC-RPi2.arm-6.0-devel/toolchain/bin/armv7ve-openelec-linux-gnueabi-gcc       CMakeFiles/cmTC_bbf65.dir/CheckSymbolExists.c.o  -o cmTC_bbf65 -rdynamic 
+CMakeFiles/cmTC_bbf65.dir/CheckSymbolExists.c.o: In function `main':
+CheckSymbolExists.c:(.text+0x1c): undefined reference to `pthread_create'
+CheckSymbolExists.c:(.text+0x20): undefined reference to `pthread_create'
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_bbf65.dir/build.make:97: recipe for target 'cmTC_bbf65' failed
+make[1]: *** [cmTC_bbf65] Error 1
+make[1]: Leaving directory '/media/Data/git/pi/OpenELEC.tv/build-pvr.mythtv-RPi2.arm/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_bbf65/fast' failed
+make: *** [cmTC_bbf65/fast] Error 2
+
+File /media/Data/git/pi/OpenELEC.tv/build-pvr.mythtv-RPi2.arm/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /media/Data/git/pi/OpenELEC.tv/build-pvr.mythtv-RPi2.arm/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_e25ba/fast"
+/usr/bin/make -f CMakeFiles/cmTC_e25ba.dir/build.make CMakeFiles/cmTC_e25ba.dir/build
+make[1]: Entering directory '/media/Data/git/pi/OpenELEC.tv/build-pvr.mythtv-RPi2.arm/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_e25ba.dir/CheckFunctionExists.c.o
+/media/Data/git/pi/OpenELEC.tv/build.OpenELEC-RPi2.arm-6.0-devel/toolchain/bin/armv7ve-openelec-linux-gnueabi-gcc    -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_e25ba.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.5/Modules/CheckFunctionExists.c
+Linking C executable cmTC_e25ba
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e25ba.dir/link.txt --verbose=1
+/media/Data/git/pi/OpenELEC.tv/build.OpenELEC-RPi2.arm-6.0-devel/toolchain/bin/armv7ve-openelec-linux-gnueabi-gcc   -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_e25ba.dir/CheckFunctionExists.c.o  -o cmTC_e25ba -rdynamic -lpthreads 
+/media/Data/git/pi/OpenELEC.tv/build.OpenELEC-RPi2.arm-6.0-devel/toolchain/lib/gcc/armv7ve-openelec-linux-gnueabi/4.9.3/../../../../armv7ve-openelec-linux-gnueabi/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_e25ba.dir/build.make:97: recipe for target 'cmTC_e25ba' failed
+make[1]: *** [cmTC_e25ba] Error 1
+make[1]: Leaving directory '/media/Data/git/pi/OpenELEC.tv/build-pvr.mythtv-RPi2.arm/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_e25ba/fast' failed
+make: *** [cmTC_e25ba/fast] Error 2
+
+
