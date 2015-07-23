@@ -1,6 +1,7 @@
 [Unit]
 # The description should be used to explain what this servicefile is for
 Description=Start VPN WiFi Hotspot
+ConditionPathExists=|/storage/.config/hotspot.conf
 Requires=network-online.service
 After=network-online.service
 Before=kodi.service
