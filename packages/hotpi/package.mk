@@ -61,6 +61,7 @@ post_install() {
   enable_service radiogaga.service
   enable_service irexec.service
   enable_service vpn-hotspot.service
+  enable_service connmanconfig.service
 }
 
 
