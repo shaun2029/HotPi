@@ -1,5 +1,5 @@
---- a/language/English/strings.po	2015-03-08 22:47:48.471908929 +0000
-+++ b/language/English/strings.po	2015-03-08 22:45:40.950756739 +0000
+--- a/addons/resource.language.en_gb/resources/strings.po	2015-03-08 22:47:48.471908929 +0000
++++ b/addons/resource.language.en_gb/resources/strings.po	2015-03-08 22:45:40.950756739 +0000
 @@ -11944,6 +11944,17 @@
  msgstr ""
  
