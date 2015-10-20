@@ -585,6 +585,7 @@
 		<skipminus>KEY_PREVIOUSSONG</skipminus>
 		<title>KEY_TV2</title>
 		<title>KEY_CONTEXT_MENU</title>
+		<title>KEY_TEXT</title>
 		<subtitle>KEY_SUBTITLE</subtitle>
 		<subtitle>KEY_TITLE</subtitle>
 		<language>KEY_LANGUAGE</language>
@@ -604,7 +605,6 @@
 		<mytv>KEY_TUNER</mytv>
 		<mytv>KEY_TV</mytv>
 		<mytv>KEY_PVR</mytv>
-		<teletext>KEY_TEXT</teletext>
 <!-- These keys have alternate uses in lircrc.conf for irexec
 		<title>KEY_EPG</title>
 		<myvideo>KEY_VIDEO</myvideo>
