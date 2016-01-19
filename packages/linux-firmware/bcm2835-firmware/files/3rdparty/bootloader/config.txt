@@ -20,6 +20,27 @@
 # Bootloader configuration - config.txt
 ################################################################################
 
+# Uncomment some or all of these to enable the optional hardware interfaces
+#dtparam=i2c_arm=on
+#dtparam=i2s=on
+#dtparam=spi=on
+
+# Uncomment one of these lines to enable an audio interface
+#dtoverlay=hifiberry-amp
+#dtoverlay=hifiberry-dac
+#dtoverlay=hifiberry-dacplus
+#dtoverlay=hifiberry-digi
+#dtoverlay=iqaudio-dac
+#dtoverlay=iqaudio-dacplus
+
+# Uncomment this to enable the lirc-rpi module
+dtoverlay=lirc-rpi
+
+# Uncomment this to override the defaults for the lirc-rpi module
+#dtparam=gpio_out_pin=16
+#dtparam=gpio_in_pin=17
+#dtparam=gpio_in_pull=down
+
 ################################################################################
 # Memory (System/GPU configuration )
 ################################################################################
@@ -29,7 +50,7 @@
 
 # SDRAM size based GPU memory split, uncomment and setup to override 'gpu_mem'
   gpu_mem_256=112
-  gpu_mem_512=160
+  gpu_mem_512=192
   gpu_mem_1024=256
 
 ################################################################################
@@ -66,6 +87,9 @@
 # Use a more conservative mode that will works fine in any cases:
 # initial_turbo=30
 
+# This is 600mA by default, but can be increased to 1.2A via software.
+# max_usb_current=1
+
 ################################################################################
 # Overscan settings
 ################################################################################
@@ -91,7 +115,12 @@
 # Doesn't sent initial active source message.
 # Avoids bringing CEC (enabled TV) out of standby and channel switch when
 # rebooting.
-  hdmi_ignore_cec_init=1
+hdmi_ignore_cec_init=1
+  
+# hdmi_group=2
+# hdmi_mode=60
+# hdmi_safe=1
+# hdmi_ignore_edid=0xa5000080
 
 ################################################################################
 # License keys to enable GPU hardware decoding for various codecs
