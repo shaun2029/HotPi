@@ -649,11 +649,6 @@ index 0000000..bd31aaa
 +
 +static void amlogic_cec_exit(void)
 +{
-+    misc_deregister(&cec_misc_device);
-+}
-+
-+module_init(amlogic_cec_init);
-+module_exit(amlogic_cec_exit);
 +
 diff --git a/drivers/amlogic/hdmi/hdmi_tx/hdmi_tx.c b/drivers/amlogic/hdmi/hdmi_tx/hdmi_tx.c
 index 3e043bc..2b11c72 100755
