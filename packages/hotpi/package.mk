@@ -23,7 +23,7 @@ PKG_ARCH="arm"
 PKG_LICENSE="GPL"
 PKG_SITE=""
 PKG_URL=""
-PKG_DEPENDS_TARGET="toolchain bash MPlayer dnsmasq openvpn"
+PKG_DEPENDS_TARGET="toolchain bash MPlayer"
 PKG_PRIORITY="optional"
 PKG_SECTION="multimedia"
 PKG_SHORTDESC="Hotpi includes VPN WiFi Hotspot, RadioGaga (Internet Radio) etc."
@@ -51,10 +51,9 @@ make_target() {
 makeinstall_target() {
   mkdir -p $INSTALL
   cp -RP $PKG_DIR/files/*  $INSTALL/
-
+  
   mkdir -p $INSTALL/usr/lib/systemd/system
     cp $PKG_DIR/system.d/* $INSTALL/usr/lib/systemd/system
-    
 }
 
 post_install() {
@@ -62,6 +61,7 @@ post_install() {
   enable_service irexec.service
   enable_service vpn-hotspot.service
   enable_service connmanconfig.service
+  enable_service dnsmasq.service
 }
 
 
