@@ -25,7 +25,7 @@ PKG_SITE="http://www.thekelleys.org.uk"
 PKG_URL="http://www.thekelleys.org.uk/dnsmasq/${PKG_NAME}-${PKG_VERSION}.tar.gz"
 PKG_DEPENDS_TARGET="toolchain yasm:host"
 PKG_PRIORITY="optional"
-PKG_SECTION="networking"
+PKG_SECTION="network"
 PKG_SHORTDESC="Dnsmasq provides network infrastructure for small networks"
 PKG_LONGDESC="Dnsmasq provides a local DNS server for the network, with forwarding of all query types to upstream recursive DNS servers and cacheing of common record types."
 
