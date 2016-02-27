@@ -37,8 +37,19 @@ configure_target() {
 }
 
 makeinstall_target() {
+    mkdir -p $INSTALL
     mkdir -p $INSTALL/usr
     mkdir -p $INSTALL/usr/sbin
     cp src/dnsmasq $INSTALL/usr/sbin/dnsmasq
+
+    cp -RP $PKG_DIR/files/*  $INSTALL/
+  
+    mkdir -p $INSTALL/usr/lib/systemd/system
+    cp $PKG_DIR/system.d/* $INSTALL/usr/lib/systemd/system
 }
+
+post_install() {
+    enable_service dnsmasq.service
+}
+
 
