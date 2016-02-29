@@ -165,6 +165,7 @@ index 0000000..bd31aaa
 +cec_global_info_t cec_global_info;
 +
 +static hdmitx_dev_t* hdmitx_device = NULL;
++static struct workqueue_struct *cec_workqueue = NULL;
 +
 +static void amlogic_cec_set_rx_state(enum cec_state state)
 +{
@@ -616,34 +617,18 @@ index 0000000..bd31aaa
 +    .fops  = &cec_fops,
 +};
 +
-+static int amlogic_cec_init(void)
-+{
-+    extern hdmitx_dev_t * get_hdmitx_device(void);
-+    INIT_LIST_HEAD(&cec_rx_struct.list);
-+
-+    printk("%s, Version: %s\n", banner, VERSION);
-+
-+    hdmitx_device = get_hdmitx_device();
-+    amlogic_cec_log_dbg("CEC init\n");
-+#if MESON_CPU_TYPE == MESON_CPU_TYPE_MESON6
-+    hdmi_wr_reg(CEC0_BASE_ADDR+CEC_CLOCK_DIV_H, 0x00 );
-+    hdmi_wr_reg(CEC0_BASE_ADDR+CEC_CLOCK_DIV_L, 0xf0 );
-+#endif
-+
-+    init_waitqueue_head(&cec_rx_struct.waitq);
-+
-+    spin_lock_init(&cec_rx_struct.lock);
-+
-+    init_waitqueue_head(&cec_tx_struct.waitq);
-+
-+    spin_lock_init(&cec_tx_struct.lock);
-+
-+    if (misc_register(&cec_misc_device))
++    cec_workqueue = create_workqueue("cec_work");
++    if (cec_workqueue == NULL)
 +    {
-+	printk(KERN_WARNING " Couldn't register device 10, %d.\n", CEC_MINOR);
-+	return -EBUSY;
++	printk("create work queue failed\n");
++	return -EFAULT;
 +    }
++    INIT_WORK(&hdmitx_device->cec_work, amlogic_cec_delayed_init);
++    queue_work(cec_workqueue, &hdmitx_device->cec_work);    // for init
 +
++    amlogic_cec_log_dbg("hdmitx_device->cec_init_ready:0x%x\n", hdmitx_device->cec_init_ready);
++
+>>>>>>> partly rollback for LG compatibility
 +    return 0;
 +}
 +
