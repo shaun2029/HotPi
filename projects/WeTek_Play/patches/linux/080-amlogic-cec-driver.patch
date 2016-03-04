@@ -165,7 +165,6 @@ index 0000000..bd31aaa
 +cec_global_info_t cec_global_info;
 +
 +static hdmitx_dev_t* hdmitx_device = NULL;
-+static struct workqueue_struct *cec_workqueue = NULL;
 +
 +static void amlogic_cec_set_rx_state(enum cec_state state)
 +{
@@ -617,6 +616,7 @@ index 0000000..bd31aaa
 +    .fops  = &cec_fops,
 +};
 +
+<<<<<<< ed1faa824d58baa597773eb4860bc3f2b9e3f89b
 +    cec_workqueue = create_workqueue("cec_work");
 +    if (cec_workqueue == NULL)
 +    {
@@ -628,7 +628,6 @@ index 0000000..bd31aaa
 +
 +    amlogic_cec_log_dbg("hdmitx_device->cec_init_ready:0x%x\n", hdmitx_device->cec_init_ready);
 +
->>>>>>> partly rollback for LG compatibility
 +    return 0;
 +}
 +
