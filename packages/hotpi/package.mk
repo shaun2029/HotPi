@@ -62,6 +62,7 @@ post_install() {
   enable_service vpn-hotspot.service
   enable_service connmanconfig.service
   enable_service dnsmasq.service
+  enable_service hotpicontrol.service
 }
 
 
