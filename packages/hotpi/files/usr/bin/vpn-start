@@ -4,7 +4,7 @@
 
 # This script is used to control a VPN connection. 
 
-VERSION="1.3.1-pi-openelec"
+VERSION="1.4.2-pi-openelec"
 
 # Get version information
 if [ -e "/etc/vpn-mode" ]; then
@@ -358,6 +358,7 @@ function setsoundwindow () {
 }
 
 function activesound () {
+    su -c "rm /tmp/vpn-hotspot-*.state" $SOUNDUSER
     su -c "touch /tmp/vpn-hotspot-busy.state" $SOUNDUSER
 
     if [ "$SOUND" -eq 1 ]; then
@@ -368,7 +369,21 @@ function activesound () {
     setsoundwindow
 }
 
+function safemodesound () {
+    su -c "rm /tmp/vpn-hotspot-*.state" $SOUNDUSER
+    su -c "touch /tmp/vpn-hotspot-busy.state" $SOUNDUSER
+    su -c "touch /tmp/vpn-hotspot-safe.state" $SOUNDUSER
+
+    if [ "$SOUND" -eq 1 ]; then
+        killall -9 mplayer  > /dev/null 2> /dev/null
+	su -c "mplayer -quiet -volume $SOUNDVOLUME /usr/share/vpn-hotspot/safemode.mp3 &" $SOUNDUSER > /dev/null 2> /dev/null
+    fi
+
+    setsoundwindow
+}
+
 function bypasssound () {
+    su -c "rm /tmp/vpn-hotspot-*.state" $SOUNDUSER
     su -c "touch /tmp/vpn-hotspot-success.state" $SOUNDUSER
     
     if [ "$SOUND" -eq 1 ]; then
@@ -380,6 +395,7 @@ function bypasssound () {
 }
 
 function resetsound () {
+    su -c "rm /tmp/vpn-hotspot-*.state" $SOUNDUSER
     su -c "touch /tmp/vpn-hotspot-busy.state" $SOUNDUSER
     
     if [ "$SOUND" -eq 1 ]; then
@@ -393,6 +409,7 @@ function resetsound () {
 function success () {
     NOWTIME=`date +%s`
     if [ $NOWTIME -lt $SOUNDWINDOW ]; then
+        su -c "rm /tmp/vpn-hotspot-*.state" $SOUNDUSER
         su -c "touch /tmp/vpn-hotspot-success.state" $SOUNDUSER
 
         if [ "$SOUND" -eq 1 ]; then
@@ -406,6 +423,7 @@ function success () {
 function failure () {
     NOWTIME=`date +%s`
     if [ $NOWTIME -lt $SOUNDWINDOW ]; then
+        su -c "rm /tmp/vpn-hotspot-*.state" $SOUNDUSER
         su -c "touch /tmp/vpn-hotspot-failure.state" $SOUNDUSER
         if [ "$SOUND" -eq 1 ]; then
             echo "SOUND: Failure"
@@ -524,15 +542,34 @@ echo "VPN HOTSPOT: Network Interface $NETIF"
 echo "VPN HOTSPOT: Local Gateway $LOCALGATEWAYIP"
 
 simplerouting
+VPNSTATE="off"
+su -c "rm /tmp/vpn-hotspot-*.state" $SOUNDUSER
 
 while [ "true" ]
 do
     # VPN active: Turn on the VPN.
     if [ -f /tmp/vpn-hotspot-active.run ]; then
         echo "COMMAND $(date +"%m-%d %T"): VPN active command."
-        activesound
-        simplevpnup
-        simplerouting
+
+        if [ "$VPNSTATE" = "off" ]; then
+            activesound
+            simplevpnup
+        
+            if [ "$VPNSTATE" = "error" ]; then
+                VPNSTATE="off"
+            elif [ "$VPNSTATE" = "off" ]; then
+                VPNSTATE="on"
+            fi
+        elif [ "$VPNSTATE" = "on" ]; then
+            safemodesound
+            VPNSTATE="safe"
+            echo "Safe mode active."
+        elif [ "$VPNSTATE" = "safe" ]; then
+            success
+            VPNSTATE="on"
+            echo "Safe mode deactivated active."
+        fi        
+
         rm /tmp/vpn-hotspot-active.run
         VPNSTATE="on"
     fi
@@ -541,7 +578,6 @@ do
     if [ -f /tmp/vpn-hotspot-bypass.run ]; then
         echo "COMMAND $(date +"%m-%d %T"): VPN bypass command."
         simplevpndown
-        simplerouting
         echo "VPN down."
         rm /tmp/vpn-hotspot-bypass.run
         VPNSTATE="off"
