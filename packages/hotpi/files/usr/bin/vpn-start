@@ -4,7 +4,7 @@
 
 # This script is used to control a VPN connection. 
 
-VERSION="1.4.2-pi-openelec"
+VERSION="1.4.3-pi-openelec"
 
 # Get version information
 if [ -e "/etc/vpn-mode" ]; then
@@ -583,8 +583,59 @@ do
         VPNSTATE="off"
         bypasssound
     fi
+    
+    if [ "$VPNSTATE" = "on" ]; then
+        getbandwidth
+    
+        if (( ($VPNINKB >= 50) && ($VPNOUTKB < 20) )); then           
+            BWHIGHCOUNT=$(($BWHIGHCOUNT+1))
+            echo "BWHIGHCOUNT: $BWHIGHCOUNT"
 
-    sleep 1
+            if (( $BWHIGHCOUNT > 20 )); then
+            
+                BWHIGHCOUNT=0
+                
+	            if [ "$VPNGATEWAYIP" == "" ]; then
+	                gettunnelinterface
+	                echo "VPN IP: $VPNGATEWAYIP"
+                fi
+                
+                disablevpn
+                VPNSTATE="disabled"
+                echo "STATE: Disabled VPN $VPNINKB/$VPNOUTKB."
+                
+                LANINKB=0
+                COUNT=0
+                BWLOWCOUNT=-10
+            fi
+        else
+            BWHIGHCOUNT=($BWHIGHCOUNT-1)
+            if (($BWHIGHCOUNT < 0)); then
+                BWHIGHCOUNT=0
+            fi
+        fi
+    elif [ "$VPNSTATE" = "disabled" ]; then  
+        getbandwidth    
+    
+        if (( ($LANINKB < 20) )); then       
+            BWLOWCOUNT=$(($BWLOWCOUNT+1))
+            echo "BWLOWCOUNT: $BWLOWCOUNT"
+
+            if (( $BWLOWCOUNT > 20 )); then
+                enablevpn
+                VPNSTATE="on"
+                echo "STATE: Enabled VPN $LANINKB/$LANOUTKB."
+                BWHIGHCOUNT=0
+            fi
+        else
+            if (($BWLOWCOUNT > 0)); then
+                BWLOWCOUNT=0    
+            fi
+        fi
+    else
+        BWHIGHCOUNT=0
+        sleep 1
+    fi  
 done
 
 
