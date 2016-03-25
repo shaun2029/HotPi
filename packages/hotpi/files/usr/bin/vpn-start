@@ -558,7 +558,7 @@ do
             if [ "$VPNSTATE" = "error" ]; then
                 VPNSTATE="off"
             elif [ "$VPNSTATE" = "off" ]; then
-                VPNSTATE="on"
+                VPNSTATE="safe"
             fi
         elif [ "$VPNSTATE" = "on" ]; then
             safemodesound
