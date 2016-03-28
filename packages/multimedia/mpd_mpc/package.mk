@@ -16,53 +16,32 @@
 #  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-PKG_NAME="hotpi"
-PKG_VERSION="1"
+# NOTE: This is t6he MPC package for MPD renamed to avoid conflict with existing mpc (math library)
+
+PKG_NAME="mpd_mpc"
+PKG_VERSION="0.27"
 PKG_REV="1"
-PKG_ARCH="arm"
+PKG_ARCH="any"
 PKG_LICENSE="GPL"
-PKG_SITE=""
-PKG_URL=""
-PKG_DEPENDS_TARGET="toolchain bash MPlayer libmpdclient mpd_mpc"
+PKG_SITE="https://ftp.gnu.org"
+PKG_URL="https://www.immutablefix.co.uk/OpenELEC-HotPi/${PKG_NAME}-${PKG_VERSION}.tar.gz"
+PKG_DEPENDS_TARGET="toolchain libmpdclient"
 PKG_PRIORITY="optional"
 PKG_SECTION="multimedia"
-PKG_SHORTDESC="Hotpi includes VPN WiFi Hotspot, RadioGaga (Internet Radio) etc."
-PKG_LONGDESC="Hotpi includes VPN WiFi Hotspot, RadioGaga (Internet Radio) etc."
+PKG_SHORTDESC="A minimalist command line interface to MPD."
+PKG_LONGDESC="A minimalist command line interface to MPD."
 
 PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
-pre_configure_target() {
-: # nothing to make here
-}
-
 configure_target() {
-: # nothing to make here
-}
-
-pre_make_target() {
-: # nothing to make here
-}
-
-make_target() {
-: # nothing to make here
+    cd $ROOT/$PKG_BUILD
+    
+    export LIBMPDCLIENT_LIBS=$SYSROOT_PREFIX/usr/lib/libmpdclient.so LIBMPDCLIENT_CFLAGS=$CFLAGS 
+    ./configure --host=$TARGET_ARCH --build=$HOST_NAME --without-PACKAGE
 }
 
 makeinstall_target() {
-  mkdir -p $INSTALL
-  cp -RP $PKG_DIR/files/*  $INSTALL/
-  
-  mkdir -p $INSTALL/usr/lib/systemd/system
-    cp $PKG_DIR/system.d/* $INSTALL/usr/lib/systemd/system
+    mkdir -p $INSTALL/usr/bin
+    cp src/mpc $INSTALL/usr/bin/
 }
-
-post_install() {
-  enable_service radiogaga.service
-  enable_service irexec.service
-  enable_service vpn-hotspot.service
-  enable_service connmanconfig.service
-  enable_service dnsmasq.service
-  enable_service hotpicontrol.service
-}
-
-
