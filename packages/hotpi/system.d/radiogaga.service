@@ -4,10 +4,13 @@ Description=Play internet radio
 ConditionPathExists=|/storage/.config/radiogaga.conf
 Requires=network-online.service
 After=network-online.service
-Before=kodi.service
 
 [Service]
-ExecStart=/usr/bin/radiogaga.start
+ExecStart=/usr/bin/radiogaga -f -p /storage/.config/
+
+RestartSec=5
+TimeoutSec=10
+Restart=always
 
 [Install]
 # The target is used by 'servicectl enable <name_of_this_file.mount>' to link
