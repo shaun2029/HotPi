@@ -18,7 +18,6 @@
 
 PKG_NAME="openvpn"
 PKG_VERSION="2.3.10"
-PKG_VERSION="2.3.5"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
@@ -50,4 +49,3 @@ post_makeinstall_target() {
   mkdir -p $INSTALL/usr/bin
     ln -sf ../sbin/openvpn $INSTALL/usr/bin/openvpn
 }
-

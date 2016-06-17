@@ -22,11 +22,7 @@ PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="BSD"
 PKG_SITE="http://www.cmake.org/"
-<<<<<<< bb5a7162f4f7de1c0a5d4092e71041d49e337015
 PKG_URL="http://www.cmake.org/files/v3.5/$PKG_NAME-$PKG_VERSION.tar.gz"
-=======
-PKG_URL="http://www.cmake.org/files/v3.4/$PKG_NAME-$PKG_VERSION.tar.gz"
->>>>>>> cmake: update to cmake-3.4.3
 PKG_DEPENDS_HOST="ccache:host"
 PKG_PRIORITY="optional"
 PKG_SECTION="toolchain/devel"
