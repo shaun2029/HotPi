@@ -1,0 +1,91 @@
+diff -Naur orig.kodi-60a76d9/addons/resource.language.en_gb/resources/strings.po kodi-60a76d9/addons/resource.language.en_gb/resources/strings.po
+--- orig.kodi-60a76d9/addons/resource.language.en_gb/resources/strings.po	2016-04-25 10:33:32.000000000 +0100
++++ kodi-60a76d9/addons/resource.language.en_gb/resources/strings.po	2016-06-19 12:38:37.499422350 +0100
+@@ -13091,6 +13091,16 @@
+ msgid "Minimise black bars"
+ msgstr ""
+ 
++msgctxt "#66000"
++msgid "Amount to reduce any top and bottom black bars by"
++msgstr ""
++
++#. Description of setting "Videos -> Playback -> Amount to reduce any top and bottom black bars by" with label #38016
++#: system/settings/settings.xml
++msgctxt "#66001"
++msgid "Allow video player to reduce the top and bottom black bars whilst maintaining the aspect ratio, by cropping the left and right of the image."
++msgstr ""
++
+ #: system/settings/settings.xml
+ msgctxt "#22022"
+ msgid "Show video files in listings"
+diff -Naur orig.kodi-60a76d9/system/settings/settings.xml kodi-60a76d9/system/settings/settings.xml
+--- orig.kodi-60a76d9/system/settings/settings.xml	2016-04-25 10:33:32.000000000 +0100
++++ kodi-60a76d9/system/settings/settings.xml	2016-06-19 12:38:37.767416343 +0100
+@@ -621,6 +621,18 @@
+             <formatlabel>14047</formatlabel>
+           </control>
+         </setting>
++        <setting id="videoplayer.reduceletterbox" type="integer" label="66000" help="66001">
++          <level>2</level>
++          <default>0</default>
++          <constraints>
++            <minimum label="231">0</minimum>
++            <step>5</step>
++            <maximum>100</maximum>
++          </constraints>
++          <control type="spinner" format="string">
++            <formatlabel>14047</formatlabel>
++          </control>
++        </setting>
+         <setting id="videoplayer.stretch43" type="integer" label="173" help="36171">
+           <level>1</level>
+           <default>0</default> <!-- ViewModeNormal -->
+diff -Naur orig.kodi-60a76d9/xbmc/cores/VideoRenderers/BaseRenderer.cpp kodi-60a76d9/xbmc/cores/VideoRenderers/BaseRenderer.cpp
+--- orig.kodi-60a76d9/xbmc/cores/VideoRenderers/BaseRenderer.cpp	2016-04-25 10:33:32.000000000 +0100
++++ kodi-60a76d9/xbmc/cores/VideoRenderers/BaseRenderer.cpp	2016-06-19 12:38:37.847414550 +0100
+@@ -533,6 +533,23 @@
+   newWidth *= zoomAmount;
+   newHeight *= zoomAmount;
+ 
++
++/* Zoom into image with black bars on the top and bottom. This will 
++   crop some off the sides of the image and reduce the black bars (letterbox). */
++  if (newHeight < screenHeight) {
++    float fReduceLetterbox = CSettings::GetInstance().GetInt(CSettings::SETTING_VIDEOPLAYER_REDUCELETTERBOX) * 0.01f;
++    
++    // Calculate the amount of top & bottom black bar height to remove
++    float reduceBarHeight = (screenHeight - newHeight) * fReduceLetterbox;
++
++    // Calculate the zoom amount
++    float boxZoomAmount = (reduceBarHeight + newHeight) / newHeight;
++    
++    // Adjust the width and height
++    newWidth *= boxZoomAmount;
++    newHeight *= boxZoomAmount;
++  }
++
+   // if we are less than one pixel off use the complete screen instead
+   if (std::abs(newWidth - screenWidth) < 1.0f)
+     newWidth = screenWidth;
+diff -Naur orig.kodi-60a76d9/xbmc/settings/Settings.cpp kodi-60a76d9/xbmc/settings/Settings.cpp
+--- orig.kodi-60a76d9/xbmc/settings/Settings.cpp	2016-06-19 12:17:20.852647000 +0100
++++ kodi-60a76d9/xbmc/settings/Settings.cpp	2016-06-19 12:38:40.331358878 +0100
+@@ -154,6 +154,7 @@
+ const std::string CSettings::SETTING_VIDEOPLAYER_PAUSEAFTERREFRESHCHANGE = "videoplayer.pauseafterrefreshchange";
+ const std::string CSettings::SETTING_VIDEOPLAYER_USEDISPLAYASCLOCK = "videoplayer.usedisplayasclock";
+ const std::string CSettings::SETTING_VIDEOPLAYER_ERRORINASPECT = "videoplayer.errorinaspect";
++const std::string CSettings::SETTING_VIDEOPLAYER_REDUCELETTERBOX = "videoplayer.reduceletterbox";
+ const std::string CSettings::SETTING_VIDEOPLAYER_STRETCH43 = "videoplayer.stretch43";
+ const std::string CSettings::SETTING_VIDEOPLAYER_TELETEXTENABLED = "videoplayer.teletextenabled";
+ const std::string CSettings::SETTING_VIDEOPLAYER_TELETEXTSCALE = "videoplayer.teletextscale";
+diff -Naur orig.kodi-60a76d9/xbmc/settings/Settings.h kodi-60a76d9/xbmc/settings/Settings.h
+--- orig.kodi-60a76d9/xbmc/settings/Settings.h	2016-04-25 10:33:32.000000000 +0100
++++ kodi-60a76d9/xbmc/settings/Settings.h	2016-06-19 12:38:40.331358878 +0100
+@@ -109,6 +109,7 @@
+   static const std::string SETTING_VIDEOPLAYER_PAUSEAFTERREFRESHCHANGE;
+   static const std::string SETTING_VIDEOPLAYER_USEDISPLAYASCLOCK;
+   static const std::string SETTING_VIDEOPLAYER_ERRORINASPECT;
++  static const std::string SETTING_VIDEOPLAYER_REDUCELETTERBOX;
+   static const std::string SETTING_VIDEOPLAYER_STRETCH43;
+   static const std::string SETTING_VIDEOPLAYER_TELETEXTENABLED;
+   static const std::string SETTING_VIDEOPLAYER_TELETEXTSCALE;
