@@ -1,2 +1,0 @@
-/media/Data/git/pi/OpenELEC.tv/build.OpenELEC-RPi2.arm-6.0-devel/toolchain/bin/armv7ve-openelec-linux-gnueabi-ar qc libplatform.a  CMakeFiles/platform.dir/src/util/fstrcmp.c.o CMakeFiles/platform.dir/src/util/StringUtils.cpp.o
-/media/Data/git/pi/OpenELEC.tv/build.OpenELEC-RPi2.arm-6.0-devel/toolchain/bin/armv7ve-openelec-linux-gnueabi-ranlib libplatform.a
