@@ -6,7 +6,7 @@ if [ "$PROJECT" == "" ]; then
     ARCH=arm
 fi
 
-BRANCH=isengard
+BRANCH=jarvis
 BUILDDIR=build-pvr.mythtv-${PROJECT}.${ARCH}
 
 
