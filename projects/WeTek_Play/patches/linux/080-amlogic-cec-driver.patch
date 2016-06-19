@@ -616,23 +616,44 @@ index 0000000..bd31aaa
 +    .fops  = &cec_fops,
 +};
 +
-<<<<<<< ed1faa824d58baa597773eb4860bc3f2b9e3f89b
-+    cec_workqueue = create_workqueue("cec_work");
-+    if (cec_workqueue == NULL)
-+    {
-+	printk("create work queue failed\n");
-+	return -EFAULT;
-+    }
-+    INIT_WORK(&hdmitx_device->cec_work, amlogic_cec_delayed_init);
-+    queue_work(cec_workqueue, &hdmitx_device->cec_work);    // for init
++static int amlogic_cec_init(void)
++{
++    extern hdmitx_dev_t * get_hdmitx_device(void);
++    INIT_LIST_HEAD(&cec_rx_struct.list);
 +
-+    amlogic_cec_log_dbg("hdmitx_device->cec_init_ready:0x%x\n", hdmitx_device->cec_init_ready);
++    printk("%s, Version: %s\n", banner, VERSION);
++
++    hdmitx_device = get_hdmitx_device();
++    amlogic_cec_log_dbg("CEC init\n");
++#if MESON_CPU_TYPE == MESON_CPU_TYPE_MESON6
++    hdmi_wr_reg(CEC0_BASE_ADDR+CEC_CLOCK_DIV_H, 0x00 );
++    hdmi_wr_reg(CEC0_BASE_ADDR+CEC_CLOCK_DIV_L, 0xf0 );
++#endif
++
++    init_waitqueue_head(&cec_rx_struct.waitq);
++
++    spin_lock_init(&cec_rx_struct.lock);
++
++    init_waitqueue_head(&cec_tx_struct.waitq);
++
++    spin_lock_init(&cec_tx_struct.lock);
++
++    if (misc_register(&cec_misc_device))
++    {
++	printk(KERN_WARNING " Couldn't register device 10, %d.\n", CEC_MINOR);
++	return -EBUSY;
++    }
 +
 +    return 0;
 +}
 +
 +static void amlogic_cec_exit(void)
 +{
++    misc_deregister(&cec_misc_device);
++}
++
++module_init(amlogic_cec_init);
++module_exit(amlogic_cec_exit);
 +
 diff --git a/drivers/amlogic/hdmi/hdmi_tx/hdmi_tx.c b/drivers/amlogic/hdmi/hdmi_tx/hdmi_tx.c
 index 3e043bc..2b11c72 100755
