@@ -238,9 +238,14 @@ fi
 
 export CXX_FOR_BUILD="$HOST_CXX"
 export CC_FOR_BUILD="$HOST_CC"
+
+
+#  prevent optimisations breaking Kodi.
+#export CFLAGS_FOR_BUILD="$HOST_CFLAGS"
 export CXXFLAGS_FOR_BUILD="$HOST_CXXFLAGS"
-export CFLAGS_FOR_BUILD="$HOST_CFLAGS"
-export LDFLAGS_FOR_BUILD="$HOST_LDFLAGS"
+export CFLAGS_FOR_BUILD=""
+#export CXXFLAGS_FOR_BUILD="-Os -fexcess-precision=fast"
+export LDFLAGS_FOR_BUILD=""
 
 export PYTHON_VERSION="2.7"
 export PYTHON_CPPFLAGS="-I$SYSROOT_PREFIX/usr/include/python$PYTHON_VERSION"
@@ -329,8 +334,12 @@ pre_configure_target() {
 # kodi should never be built with lto
   strip_lto
 
-  export CFLAGS="$CFLAGS $KODI_CFLAGS"
-  export CXXFLAGS="$CXXFLAGS $KODI_CXXFLAGS"
+#  prevent optimisations breaking Kodi.
+#  export CFLAGS="$CFLAGS $KODI_CFLAGS"
+#  export CXXFLAGS="$CXXFLAGS $KODI_CXXFLAGS"
+  CUSTOM_CFLAGS=`echo "-Os" | sed -e "s|$GCC_OPTIM_LTO||g"`
+  export CFLAGS="$CUSTOM_CFLAGS $KODI_CFLAGS"
+  export CXXFLAGS="$CUSTOM_CFLAGS $KODI_CXXFLAGS"
   export LIBS="$LIBS -lz"
 
   export JSON_BUILDER=$ROOT/$TOOLCHAIN/bin/JsonSchemaBuilder
