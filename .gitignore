@@ -29,3 +29,6 @@ mkpkg-temp
 # crap
 .DS_Store
 *~
+
+build-pvr.mythtv-RPi.arm
+build-pvr.mythtv-RPi2.arm
