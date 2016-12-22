@@ -2,7 +2,7 @@
 
 #Select PROJECT and ARCH to build
 if [ "$PROJECT" == "" ]; then
-    PROJECT=RPi
+    PROJECT=RPi2
     ARCH=arm
 fi
 
