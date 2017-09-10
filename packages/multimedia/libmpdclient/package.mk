@@ -35,7 +35,7 @@ PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 configure_target() {
-    cd $ROOT/$PKG_BUILD
+    cd $PKG_BUILD
     ./configure --host=$TARGET_ARCH-linux --build=$HOST_NAME --with-gnu-ld --disable-documentation --prefix=$SYSROOT_PREFIX/usr --exec-prefix=$SYSROOT_PREFIX/usr
 }
 

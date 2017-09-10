@@ -66,7 +66,7 @@ case "$TARGET_FPU" in
 esac
 
 pre_configure_target() {
-  cd $ROOT/$PKG_BUILD
+  cd $PKG_BUILD
   rm -rf .$TARGET_NAME
 
   export pkg_config="$ROOT/$TOOLCHAIN/bin/pkg-config"

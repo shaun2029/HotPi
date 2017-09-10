@@ -35,7 +35,7 @@ PKG_IS_ADDON="no"
 PKG_AUTORECONF="no"
 
 configure_target() {
-    cd $ROOT/$PKG_BUILD
+    cd $PKG_BUILD
     
     export LIBMPDCLIENT_LIBS=$SYSROOT_PREFIX/usr/lib/libmpdclient.so LIBMPDCLIENT_CFLAGS=$CFLAGS 
     ./configure --host=$TARGET_ARCH --build=$HOST_NAME --without-PACKAGE
