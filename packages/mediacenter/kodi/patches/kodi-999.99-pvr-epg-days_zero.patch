@@ -1,0 +1,214 @@
+diff -Naur xbmc.orig/system/settings/settings.xml xbmc/system/settings/settings.xml
+--- xbmc.orig/system/settings/settings.xml	2017-08-22 08:29:22.000000000 +0100
++++ xbmc/system/settings/settings.xml	2017-11-30 02:03:15.486061563 +0000
+@@ -1322,7 +1322,7 @@
+           <level>2</level>
+           <default>3</default>
+           <constraints>
+-            <minimum>1</minimum>
++            <minimum>0</minimum>
+             <step>1</step>
+             <maximum>31</maximum>
+           </constraints>
+diff -Naur xbmc.orig/xbmc/epg/EpgContainer.cpp xbmc/xbmc/epg/EpgContainer.cpp
+--- xbmc.orig/xbmc/epg/EpgContainer.cpp	2017-08-22 08:29:22.000000000 +0100
++++ xbmc/xbmc/epg/EpgContainer.cpp	2017-11-30 15:28:26.030819705 +0000
+@@ -626,112 +626,114 @@
+   bool bShowProgress(false);
+   int pendingUpdates(0);
+ 
+-  /* set start and end time */
+-  time_t start;
+-  time_t end;
+-  CDateTime::GetCurrentDateTime().GetAsUTCDateTime().GetAsTime(start);
+-  end = start + m_iDisplayTime;
+-  start -= g_advancedSettings.m_iEpgLingerTime * 60;
+-  bShowProgress = g_advancedSettings.m_bEpgDisplayUpdatePopup && (m_bIsInitialising || g_advancedSettings.m_bEpgDisplayIncrementalUpdatePopup);
+-
+-  {
+-    CSingleLock lock(m_critSection);
+-    if (m_bIsUpdating || InterruptUpdate())
+-      return false;
+-    m_bIsUpdating = true;
+-    pendingUpdates = m_pendingUpdates;
+-  }
+-
+-  if (bShowProgress && !bOnlyPending)
+-    ShowProgressDialog();
+-
+-  if (!m_bIgnoreDbForClient && !m_database.IsOpen())
+-  {
+-    CLog::Log(LOGERROR, "EpgContainer - %s - could not open the database", __FUNCTION__);
++  if (m_iDisplayTime > 0) {
++    /* set start and end time */
++    time_t start;
++    time_t end;
++    CDateTime::GetCurrentDateTime().GetAsUTCDateTime().GetAsTime(start);
++    end = start + m_iDisplayTime;
++    start -= g_advancedSettings.m_iEpgLingerTime * 60;
++    bShowProgress = g_advancedSettings.m_bEpgDisplayUpdatePopup && (m_bIsInitialising || g_advancedSettings.m_bEpgDisplayIncrementalUpdatePopup);
+ 
+     {
+       CSingleLock lock(m_critSection);
+-      m_bIsUpdating = false;
+-      m_updateEvent.Set();
++      if (m_bIsUpdating || InterruptUpdate())
++        return false;
++      m_bIsUpdating = true;
++      pendingUpdates = m_pendingUpdates;
+     }
+ 
+     if (bShowProgress && !bOnlyPending)
+-      CloseProgressDialog();
++      ShowProgressDialog();
+ 
+-    return false;
+-  }
++    if (!m_bIgnoreDbForClient && !m_database.IsOpen())
++    {
++      CLog::Log(LOGERROR, "EpgContainer - %s - could not open the database", __FUNCTION__);
+ 
+-  std::vector<CEpgPtr> invalidTables;
++      {
++        CSingleLock lock(m_critSection);
++        m_bIsUpdating = false;
++        m_updateEvent.Set();
++      }
+ 
+-  /* load or update all EPG tables */
+-  unsigned int iCounter(0);
+-  for (const auto &epgEntry : m_epgs)
+-  {
+-    if (InterruptUpdate())
+-    {
+-      bInterrupted = true;
+-      break;
++      if (bShowProgress && !bOnlyPending)
++        CloseProgressDialog();
++
++      return false;
+     }
+ 
+-    CEpgPtr epg = epgEntry.second;
+-    if (!epg)
+-      continue;
++    std::vector<CEpgPtr> invalidTables;
+ 
+-    if (bShowProgress && !bOnlyPending)
+-      UpdateProgressDialog(++iCounter, m_epgs.size(), epg->Name());
++    /* load or update all EPG tables */
++    unsigned int iCounter(0);
++    for (const auto &epgEntry : m_epgs)
++    {
++      if (InterruptUpdate())
++      {
++        bInterrupted = true;
++        break;
++      }
++
++      CEpgPtr epg = epgEntry.second;
++      if (!epg)
++        continue;
++
++      if (bShowProgress && !bOnlyPending)
++        UpdateProgressDialog(++iCounter, m_epgs.size(), epg->Name());
++
++      // we currently only support update via pvr add-ons. skip update when the pvr manager isn't started
++      if (!g_PVRManager.IsStarted())
++        continue;
++
++      // check the pvr manager when the channel pointer isn't set
++      if (!epg->Channel())
++      {
++        CPVRChannelPtr channel = g_PVRChannelGroups->GetChannelByEpgId(epg->EpgID());
++        if (channel)
++          epg->SetChannel(channel);
++      }
++
++      if ((!bOnlyPending || epg->UpdatePending()) && epg->Update(start, end, m_iUpdateTime, bOnlyPending))
++        iUpdatedTables++;
++      else if (!epg->IsValid())
++        invalidTables.push_back(epg);
++    }
+ 
+-    // we currently only support update via pvr add-ons. skip update when the pvr manager isn't started
+-    if (!g_PVRManager.IsStarted())
+-      continue;
++    for (auto it = invalidTables.begin(); it != invalidTables.end(); ++it)
++      DeleteEpg(**it, true);
+ 
+-    // check the pvr manager when the channel pointer isn't set
+-    if (!epg->Channel())
++    if (bInterrupted)
++    {
++      /* the update has been interrupted. try again later */
++      time_t iNow;
++      CDateTime::GetCurrentDateTime().GetAsUTCDateTime().GetAsTime(iNow);
++      m_iNextEpgUpdate = iNow + g_advancedSettings.m_iEpgRetryInterruptedUpdateInterval;
++    }
++    else
+     {
+-      CPVRChannelPtr channel = g_PVRChannelGroups->GetChannelByEpgId(epg->EpgID());
+-      if (channel)
+-        epg->SetChannel(channel);
++      CSingleLock lock(m_critSection);
++      CDateTime::GetCurrentDateTime().GetAsUTCDateTime().GetAsTime(m_iNextEpgUpdate);
++      m_iNextEpgUpdate += g_advancedSettings.m_iEpgUpdateCheckInterval;
++      if (m_pendingUpdates == pendingUpdates)
++        m_pendingUpdates = 0;
+     }
+ 
+-    if ((!bOnlyPending || epg->UpdatePending()) && epg->Update(start, end, m_iUpdateTime, bOnlyPending))
+-      iUpdatedTables++;
+-    else if (!epg->IsValid())
+-      invalidTables.push_back(epg);
+-  }
++    if (bShowProgress && !bOnlyPending)
++      CloseProgressDialog();
+ 
+-  for (auto it = invalidTables.begin(); it != invalidTables.end(); ++it)
+-    DeleteEpg(**it, true);
++    /* notify observers */
++    if (iUpdatedTables > 0)
++    {
++      SetChanged();
++      CSingleExit ex(m_critSection);
++      NotifyObservers(ObservableMessageEpgContainer);
++    }
+ 
+-  if (bInterrupted)
+-  {
+-    /* the update has been interrupted. try again later */
+-    time_t iNow;
+-    CDateTime::GetCurrentDateTime().GetAsUTCDateTime().GetAsTime(iNow);
+-    m_iNextEpgUpdate = iNow + g_advancedSettings.m_iEpgRetryInterruptedUpdateInterval;
+-  }
+-  else
+-  {
+     CSingleLock lock(m_critSection);
+-    CDateTime::GetCurrentDateTime().GetAsUTCDateTime().GetAsTime(m_iNextEpgUpdate);
+-    m_iNextEpgUpdate += g_advancedSettings.m_iEpgUpdateCheckInterval;
+-    if (m_pendingUpdates == pendingUpdates)
+-      m_pendingUpdates = 0;
++    m_bIsUpdating = false;
++    m_updateEvent.Set();
+   }
+ 
+-  if (bShowProgress && !bOnlyPending)
+-    CloseProgressDialog();
+-
+-  /* notify observers */
+-  if (iUpdatedTables > 0)
+-  {
+-    SetChanged();
+-    CSingleExit ex(m_critSection);
+-    NotifyObservers(ObservableMessageEpgContainer);
+-  }
+-
+-  CSingleLock lock(m_critSection);
+-  m_bIsUpdating = false;
+-  m_updateEvent.Set();
+-
+   return !bInterrupted;
+ }
+ 
