@@ -4,7 +4,7 @@
 
 # This script is used to control a VPN connection. 
 
-VERSION="1.5.0-pi-openelec"
+VERSION="1.6.0-pi-libreelec"
 
 # Get version information
 if [ -e "/etc/vpn-mode" ]; then
@@ -54,7 +54,7 @@ STOPONEXIT=1
 # been active for a period.
 NETWORKMANAGERSTATE=0   # Assume network manager is up
 KILLNETWORKMANAGER=0    # Kill NetworkManager seems to kill the hotspot on the raspberry pi.
-STARTDNSMASQ=1		    # Start dnsmasq after hotspot if not started
+STARTDNSMASQ=2		    # Start dnsmasq after hotspot if not startedm 2 always start dnsmasq
 
 SOUND=1                 # Sound on/off
 SOUNDVOLUME="30 -softvol "	      # Sound level for audio vpn status feedback
@@ -527,14 +527,9 @@ do
     internettest
 done
 
-if [ "$STARTDNSMASQ" == 1 ]; then
-    if [ "$(pidof dnsmasq)" ]; then
-        echo "VPN HOTSPOT: dnsmasq already started."
-        dnsmasq
-    else
-        echo "VPN HOTSPOT: Starting dnsmasq."
-        dnsmasq
-    fi
+if [ "$STARTDNSMASQ" > 0 ]; then
+    echo "VPN HOTSPOT: Starting dnsmasq."
+    systemctl start dnsmasq
 fi
 
 getinternetinterface
@@ -566,6 +561,11 @@ do
 
         rm /tmp/vpn-hotspot-active.run
         VPNSTATE="on"
+
+        if [ "$STARTDNSMASQ" > 1 ]; then
+            echo "VPN HOTSPOT: Re-starting dnsmasq."
+            systemctl restart dnsmasq
+        fi
     fi
 
     # VPN bypass: Pull down the vpn.
@@ -576,6 +576,11 @@ do
         rm /tmp/vpn-hotspot-bypass.run
         VPNSTATE="off"
         bypasssound
+
+        if [ "$STARTDNSMASQ" > 1 ]; then
+            echo "VPN HOTSPOT: Re-starting dnsmasq."
+            systemctl restart dnsmasq
+        fi
     fi
     
     sleep 1

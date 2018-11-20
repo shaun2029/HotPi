@@ -1,0 +1,20 @@
+#!/bin/bash
+# Play background sound to keep amp alive.
+
+function_to_fork() {
+echo "$SOUNDFILE"
+while true; do
+	aplay "$SOUNDFILE"
+	sleep 15m
+done
+}
+
+if [ -f "$1" ]; then
+  SOUNDFILE="/usr/share/sounds/chirp.wav"
+else
+  SOUNDFILE="$1"
+fi
+
+echo "$SOUNDFILE"
+
+function_to_fork &
