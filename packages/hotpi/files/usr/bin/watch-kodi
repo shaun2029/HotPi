@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ "$1" = "" ]; then
+  $MINFREE="100"
+else
+  $MINFREE="$1"
+fi
+
+function_to_fork() {
+while true; do
+	FREE=`free -m | grep "buffers/cache" | awk '{print $4}'`
+
+  if [ "$FREE" -lt "$MINFREE" ]; then
+    systemctl restart kodi
+  fi
+
+  sleep 5
+done
+}
+
+function_to_fork &
+
