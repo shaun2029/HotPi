@@ -13,9 +13,9 @@
 
 
 # import my hue bash library
-source hue_bashlibrary.sh
+source /usr/bin/hue_bashlibrary.sh
 # import extra hue bash library
-source hue_bashlibrary_extra.sh
+source /usr/bin/hue_bashlibrary_extra.sh
 
 # CONFIGURATION
 # -----------------------------------------------------------------------------------------
@@ -77,7 +77,7 @@ if [[ $# == 1 ]]
 	echo		# force new line
 	exit
 else 
-	if (( $# > 2 )) || (( $# < 1 ))
+	if (( $# > 3 )) || (( $# < 1 ))
 	then
 		# more than one argument, show usage
 		usage
@@ -90,8 +90,12 @@ fi
 
 light=$1
 levels=("$2")
+lights=("$3")
+if [ "$lights" = "" ]; then
+  lights=$light
+fi
+
 BRIGHTNESS=0
-TIMEDELAY=5         # Timeout between uses
 
 if [ $light == "s" ]; then
     if [ -f "/tmp/hue_selected_light.dat" ]; then
@@ -101,47 +105,19 @@ if [ $light == "s" ]; then
     fi
 fi
 
-if [ -f "/tmp/hue_toggle_brightness_$light.dat" ]; then
-    # Get the first number
-    time=`cat "/tmp/hue_toggle_brightness_$light.dat" | { read first second ; echo $first ; }`
-else
-    time=`date +%s`
-    time=$[time + TIMEDELAY + 1] # force timeout
-fi
 
-# Save new timeout
-NOWTIME=`date +%s`
-TIMEOUT=$[NOWTIME + TIMEDELAY]
-echo "$TIMEOUT" > "/tmp/hue_toggle_brightness_$light.dat"
-
-echo "Time: '$time'"
-
-# if timout expired since last use switch it on or off.
-if [ "$time" -lt $NOWTIME ]; then
     hue_is_on $light
 
     # If the light is off use lowest brightness
     if [ "$result_hue_is_on" == 0 ]; then
         get_brightness $light
         MINBRIGHTNESS=`echo "$levels" | { read first second ; echo $first ; }`
+#        set_brightness $MINBRIGHTNESS $light
 
-        BRIGHTNESS=$[result_hue_get_brightness]
-        if [ "$BRIGHTNESS" -lt "$MINBRIGHTNESS" ]; then 
-            set_brightness $MINBRIGHTNESS $light
-        else
-            hue_onoff "on" $light
-        fi
-    else
-        hue_onoff "off" $light
-    fi
-else
-    hue_is_on $light
-
-    # If the light is off use lowest brightness
-    if [ "$result_hue_is_on" == 0 ]; then
-        get_brightness $light
-        MINBRIGHTNESS=`echo "$levels" | { read first second ; echo $first ; }`
-        set_brightness $MINBRIGHTNESS $light
+        for l in $lights
+        do
+          set_brightness $MINBRIGHTNESS $l
+        done
     else
         get_brightness $light
 
@@ -158,9 +134,11 @@ else
             fi
         done
 
-        set_brightness $NEWBRIGHTNESS $light
+	for l in $lights
+	do
+          set_brightness $NEWBRIGHTNESS $l
+	done
     fi
-fi
 
 exit 0
 
