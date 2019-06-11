@@ -1,0 +1,62 @@
+diff -Naur /tmp/kodi-newclock5_18.2-Leia.org/xbmc/input/InputManager.cpp /tmp/kodi-newclock5_18.2-Leia/xbmc/input/InputManager.cpp
+--- kodi-newclock5_18.2-Leia.org/xbmc/input/InputManager.cpp	2019-04-22 22:10:05.000000000 +0100
++++ kodi-newclock5_18.2-Leia/xbmc/input/InputManager.cpp	2019-06-11 22:33:29.963161916 +0100
+@@ -89,6 +89,7 @@
+ 
+   m_Mouse.Initialize();
+   m_Mouse.SetEnabled(CServiceBroker::GetSettingsComponent()->GetSettings()->GetBool(CSettings::SETTING_INPUT_ENABLEMOUSE));
++  interfaceDisabled = false;
+ }
+ 
+ void CInputManager::Deinitialize()
+@@ -490,7 +491,12 @@
+ 
+ bool CInputManager::HandleKey(const CKey& key)
+ {
+-  // Turn the mouse off, as we've just got a keypress from controller or remote
++  // Ignore keys if interface is disabled
++  if (interfaceDisabled) {
++    return(true);
++  }
++
++// Turn the mouse off, as we've just got a keypress from controller or remote
+   m_Mouse.SetActive(false);
+ 
+   // get the current active window
+@@ -701,11 +707,25 @@
+ 
+ bool CInputManager::HasBuiltin(const std::string& command)
+ {
++  return command == "lirc.stop"  ||
++         command == "lirc.start";
+   return false;
+ }
+ 
+ int CInputManager::ExecuteBuiltin(const std::string& execute, const std::vector<std::string>& params)
+ {
++  if (execute == "lirc.stop")
++  {
++    interfaceDisabled = true;
++  }
++  else if (execute == "lirc.start")
++  {
++    interfaceDisabled = false;
++  }
++  else {
++    return -1;
++  }
++
+   return 0;
+ }
+ 
+diff -Naur /tmp/kodi-newclock5_18.2-Leia.org/xbmc/input/InputManager.h /tmp/kodi-newclock5_18.2-Leia/xbmc/input/InputManager.h
+--- kodi-newclock5_18.2-Leia.org/xbmc/input/InputManager.h	2019-04-22 22:10:05.000000000 +0100
++++ kodi-newclock5_18.2-Leia/xbmc/input/InputManager.h	2019-06-11 22:24:13.736548094 +0100
+@@ -272,6 +272,7 @@
+   CKeyboardStat m_Keyboard;
+   CMouseStat m_Mouse;
+   CKey m_LastKey;
++  bool interfaceDisabled;
+ 
+   std::map<std::string, std::map<int, float> > m_lastAxisMap;
+ 
