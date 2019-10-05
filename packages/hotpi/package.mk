@@ -23,7 +23,7 @@ PKG_ARCH="arm"
 PKG_LICENSE="GPL"
 PKG_SITE=""
 PKG_URL=""
-PKG_DEPENDS_TARGET="toolchain"
+PKG_DEPENDS_TARGET="toolchain mediacenter"
 PKG_PRIORITY="optional"
 PKG_SECTION="multimedia"
 PKG_SHORTDESC="Hotpi includes VPN WiFi Hotspot, RadioGaga (Internet Radio) etc."
@@ -53,10 +53,10 @@ makeinstall_target() {
   cp -RP $PKG_DIR/files/*  $INSTALL/
 
   mkdir -p $INSTALL/usr/lib/systemd/system
-    cp $PKG_DIR/system.d/* $INSTALL/usr/lib/systemd/system
+  cp $PKG_DIR/system.d/* $INSTALL/usr/lib/systemd/system
 
   mkdir -p $INSTALL/usr/share/kodi/system
-    cp $PKG_DIR/kodi.system/* $INSTALL/usr/share/kodi/system/
+  cp $PKG_DIR/kodi.system/* $INSTALL/usr/share/kodi/system/
 }
 
 post_install() {
